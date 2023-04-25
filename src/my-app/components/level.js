@@ -12,7 +12,9 @@ export class Level extends Component {
 
     constructor(app, player) {
         super(app);
-        this.position = 0;
+        this.startPosition = 0;
+        this.currentPosition = 0;
+        this.endPosition = 0;
         this.backgrounds = [];
         this.player = player;
         this.enemies = [];
@@ -30,7 +32,6 @@ export class Level extends Component {
     update(params) {
         super.update(params);
         this.player.update(params);
-        console.log(this.player.state);
     }
 
     render(params) {

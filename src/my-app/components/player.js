@@ -11,7 +11,6 @@ export class Player extends Component {
 
     constructor(app, x, y, width, height) {
         super(app, x, y, width, height);
-        this.groundHeight = 50;
         this.spriteWidth = 230;
         this.spriteHeight = 160;
         this.state = PLAYER_STATE_IDLE;
@@ -25,7 +24,6 @@ export class Player extends Component {
         this.srcY = 0;
         this.frame = 0;
         this.frames = 0;
-        this.isJumping = false;
         this.isAttacking = false;
         this.isRunningForward = false;
         this.isRunningBackward = false;
@@ -50,6 +48,57 @@ export class Player extends Component {
 
     update(params) {
         super.update(params);
+
+        if (this.died)
+            return;
+
+        this.timeToAnimate += params.deltaTime;
+
+        if (this.timeToAnimate > this.animateInterval) {
+            this.frame++;
+            this.frames++;
+
+            if (this.state == PLAYER_STATE_IDLE) {
+                this.lastLineFrame = 5;
+                this.lastFrame = 40;
+            } else if (this.state == PLAYER_STATE_RUN_FORWARD) {
+                this.lastLineFrame = 4;
+                this.lastFrame = 20;
+            } else if (this.state == PLAYER_STATE_RUN_BACKWARD) {
+                this.lastLineFrame = 4;
+                this.lastFrame = 20;
+            } else if (this.state == PLAYER_STATE_ATTACK) {
+                this.lastLineFrame = 4;
+                this.lastFrame = 20;
+            } else if (this.state == PLAYER_STATE_DIE) {
+                this.lastLineFrame = 4;
+                this.lastFrame = 24;
+            }
+
+            if (this.frames == this.lastFrame) {
+                if (this.isDying) {
+                    this.died = true;
+                } else {
+                    this.srcX = this.startSrcX;
+                    this.srcY = 0;
+                    this.frame = 0;
+                    this.frames = 0;
+                }
+
+                this.isAttacking = false;
+                this.isDying = false;
+            } else {
+                if (this.frame == this.lastLineFrame) {
+                    this.frame = 0;
+                    this.srcX = this.startSrcX;
+                    this.srcY += this.spriteHeight;
+                } else {
+                    this.srcX += this.stepSrcX;
+                }
+            }
+
+            this.timeToAnimate = 0;
+        }
     }
 
     render(params) {
@@ -128,7 +177,7 @@ export class Player extends Component {
     }
 
     idle() {
-        if (this.state !== PLAYER_STATE_IDLE && !this.died && !this.isJumping && !this.isAttacking) {
+        if (this.state !== PLAYER_STATE_IDLE && !this.died && !this.isAttacking) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;
@@ -141,37 +190,33 @@ export class Player extends Component {
     }
 
     runForward() {
-        if (this.state !== PLAYER_STATE_RUN_FORWARD && !this.died && !this.isJumping && !this.isAttacking) {
-            if (!this.isJumping) {
-                this.frame = 0;
-                this.frames = 0;
-                this.srcX = this.startSrcX;
-                this.srcY = 0;
-                this.frames = 0;
-                this.state = PLAYER_STATE_RUN_FORWARD;
-            }
+        if (this.state !== PLAYER_STATE_RUN_FORWARD && !this.died && !this.isAttacking) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = PLAYER_STATE_RUN_FORWARD;
             this.isRunningForward = true;
             this.isRunningBackward = false;
         }
     }
 
     runBackward() {
-        if (this.state !== PLAYER_STATE_RUN_BACKWARD && !this.died && !this.isJumping) {
-            if (!this.isJumping) {
-                this.frame = 0;
-                this.frames = 0;
-                this.srcX = this.startSrcX;
-                this.srcY = 0;
-                this.frames = 0;
-                this.state = PLAYER_STATE_RUN_BACKWARD;
-            }
+        if (this.state !== PLAYER_STATE_RUN_BACKWARD && !this.died) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = PLAYER_STATE_RUN_BACKWARD;
             this.isRunningBackward = true;
             this.isRunningForward = false;
         }
     }
 
     attack() {
-        if (this.state !== PLAYER_STATE_ATTACK && !this.died && !this.isJumping && !this.isAttacking) {
+        if (this.state !== PLAYER_STATE_ATTACK && !this.died && !this.isAttacking) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;
@@ -194,7 +239,6 @@ export class Player extends Component {
             this.isAttacking = false;
             this.isRunningForward = false;
             this.isRunningBackward = false;
-            this.isJumping = false;
         }
     }
 

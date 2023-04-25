@@ -4,24 +4,19 @@ import ParkLevel from "../levels/park-level";
 
 export default class GameScreen extends Component {
 
-    constructor(app) {
-        super(app);
+    constructor(app, x, y, width, height) {
+        super(app, x, y, width, height);
         this.levels = [ParkLevel]
         this.level = null;
     }
 
     async init() {
-        super.init();
+        await super.init();
 
-        try {
+        
             this.level = new this.levels[0](this.app);
             await this.level.init();
-        } catch (err) {
-            this.app.setComponent(new ErrorScreen(this.app, err));
-            return false;
-        }
-
-        return true;
+        
     }
 
     update(params) {

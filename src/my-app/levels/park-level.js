@@ -13,13 +13,13 @@ export default class ParkLevel extends Level {
                 new Layer("assets/img/layers/night/front.png", 0.5, false),
                 new Layer("assets/img/layers/night/trees.png", 0.5, false),
                 new Layer("assets/img/layers/night/ground.png", 2, false),
-                new Layer("assets/img/layers/night/light1.png", 2, false)
+                new Layer("assets/img/layers/night/light.png", 2, false)
             ])
         ]
     }
 
     async init() {
-        return super.init();
+        await super.init();
     }
 
     update(params) {

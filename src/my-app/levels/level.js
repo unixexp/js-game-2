@@ -12,13 +12,11 @@ export class Level extends Component {
     }
 
     async init() {
-        super.init();
+        await super.init();
 
-        this.backgrounds.forEach(async background => {
+        for (const background of this.backgrounds) {
             await background.init();
-        });
-
-        return true;
+        }
     }
 
     update(params) {
@@ -35,12 +33,13 @@ export class Background {
 
     constructor(layers) {
         this.layers = layers;
+        this.error = null;
     }
 
     async init() {
-        this.layers.forEach(async layer => {
+        for (const layer of this.layers) {
             await layer.init();
-        });
+        }
     }
 
 }

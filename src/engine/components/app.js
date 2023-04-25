@@ -43,7 +43,13 @@ export default class App {
 
     async setComponent(component) {
         this.componentInitialized = false;
-        this.componentInitialized = await component.init();
+        try {
+            await component.init();
+        } catch(err) {
+            console.log(`Error init component ${component.constructor.name}: ${err}`);
+            return
+        }
+        this.componentInitialized = true;
         this.component = component;
     }
 

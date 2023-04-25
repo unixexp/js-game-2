@@ -1,22 +1,25 @@
 export default class Component {
 
-    constructor(app) {
+    constructor(app, x, y, width, height) {
         this.id = Math.floor(Math.random() * 1000);
         this.app = app;
         this.canvas = app.canvas;
         this.context = this.canvas.getContext("2d");
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
     async init() {
-        return true;
     }
 
     clear() {
         this.context.clearRect(
-            0,
-            0,
-            this.app.scaleByX(this.app.worldWidth),
-            this.app.scaleByY(this.app.worldWidth)
+            this.app.scaleByX(this.x),
+            this.app.scaleByY(this.y),
+            this.app.scaleByX(this.width),
+            this.app.scaleByY(this.height)
         );
     }
 

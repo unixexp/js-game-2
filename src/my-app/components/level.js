@@ -1,12 +1,5 @@
 import Component from "../../engine/components/component";
 import { loadImage } from "../../engine/utils/files";
-import {
-    PLAYER_STATE_IDLE,
-    PLAYER_STATE_RUN_FORWARD,
-    PLAYER_STATE_ATTACK,
-    PLAYER_STATE_DIE,
-    PLAYER_STATE_RUN_BACKWARD
-} from "./player";
 
 export class Level extends Component {
 
@@ -14,7 +7,7 @@ export class Level extends Component {
         super(app);
         this.startPosition = 0;
         this.currentPosition = 0;
-        this.endPosition = 0;
+        this.endPosition = 10000;
         this.backgrounds = [];
         this.player = player;
         this.enemies = [];
@@ -31,11 +24,38 @@ export class Level extends Component {
 
     update(params) {
         super.update(params);
+
+        if (this.player.isRunningForward) {
+            if (this.currentPosition !== this.endPosition) {
+                this.currentPosition++;
+
+                this.backgrounds.forEach(background => {
+                    background.runForward();
+                    background.update(params);
+                });
+            }
+        } else if (this.player.isRunningBackward) {
+            if (this.currentPosition !== this.startPosition) {
+                this.currentPosition--;
+
+                this.backgrounds.forEach(background => {
+                    background.runBackward();
+                    background.update(params);
+                });
+            }
+        }
+
         this.player.update(params);
     }
 
     render(params) {
         super.render(params);
+
+        this.backgrounds.forEach(background => {
+            background.position = this.currentPosition;
+            background.render(params);
+        });
+
         this.player.render(params);
     }
 
@@ -62,6 +82,38 @@ export class Background extends Component {
 
     render(params) {
         super.update(params);
+
+        this.layers.forEach(layer => layer.render(params));
+    }
+
+    runForward() {
+        this.layers.forEach(layer => {
+            if (layer.x1 < -layer.width) {
+                layer.x1 = layer.width + layer.x2;
+            }
+    
+            if (layer.x2 < -layer.width) {
+                layer.x2 = layer.width + layer.x1;
+            }
+    
+            layer.x1--;
+            layer.x2--;
+        });
+    }
+
+    runBackward() {
+        this.layers.forEach(layer => {
+            if (layer.x1 > layer.width) {
+                layer.x1 = layer.x2 - layer.width;
+            }
+    
+            if (layer.x2 > layer.width) {
+                layer.x2 = layer.x1 - layer.width;
+            }
+    
+            layer.x1++;
+            layer.x2++;
+        });
     }
 
 }
@@ -96,6 +148,22 @@ export class Layer extends Component {
 
     render(params) {
         super.render(params);
+
+        this.context.drawImage(
+            this.image,
+            this.app.scaleByX(this.x1),
+            this.app.scaleByY(0),
+            this.app.scaleByX(this.width),
+            this.app.scaleByY(this.height)
+            );
+
+        this.context.drawImage(
+            this.image,
+            this.app.scaleByX(this.x2),
+            this.app.scaleByY(0),
+            this.app.scaleByX(this.width),
+            this.app.scaleByY(this.height)
+            );
     }
 
 }

@@ -45,6 +45,11 @@ export class Level extends Component {
             }
         }
 
+        this.backgrounds.forEach(background => {
+            background.movePermanentLayers();
+            background.update(params);
+        });
+
         this.player.update(params);
     }
 
@@ -66,6 +71,7 @@ export class Background extends Component {
     constructor(app, layers) {
         super(app);
         this.layers = layers;
+        this.permanentLayers = this.layers.filter(layer => layer.permanent);
     }
 
     async init() {
@@ -78,12 +84,30 @@ export class Background extends Component {
 
     update(params) {
         super.update(params);
+
+        this.layers.forEach(layer => layer.update(params));
     }
 
     render(params) {
         super.update(params);
 
         this.layers.forEach(layer => layer.render(params));
+    }
+
+    movePermanentLayers() {
+        
+        this.permanentLayers.forEach(layer => {
+            if (layer.x1 < -layer.width) {
+                layer.x1 = layer.width + layer.x2;
+            }
+    
+            if (layer.x2 < -layer.width) {
+                layer.x2 = layer.width + layer.x1;
+            }
+    
+            layer.x1-= layer.speed;
+            layer.x2-= layer.speed;
+        });
     }
 
     runForward() {
@@ -96,8 +120,8 @@ export class Background extends Component {
                 layer.x2 = layer.width + layer.x1;
             }
     
-            layer.x1--;
-            layer.x2--;
+            layer.x1-= layer.speed;
+            layer.x2-= layer.speed;
         });
     }
 
@@ -111,8 +135,8 @@ export class Background extends Component {
                 layer.x2 = layer.x1 - layer.width;
             }
     
-            layer.x1++;
-            layer.x2++;
+            layer.x1 += layer.speed;
+            layer.x2 += layer.speed;
         });
     }
 

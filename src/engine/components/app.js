@@ -14,6 +14,7 @@ export default class App {
         this.worldMouseY = 0;
         this.mouseX = 0;
         this.mouseY = 0;
+        this.debug = 1;
 
         window.addEventListener("keydown", e => {
             if (this.keys.findIndex(k => k === e.key) === -1)

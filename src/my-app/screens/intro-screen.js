@@ -5,8 +5,8 @@ import { loadImage } from "../../engine/utils/files";
 
 export default class IntroScreen extends Component {
 
-    constructor(app) {
-        super(app);
+    constructor(app, x, y, width, height) {
+        super(app, x, y, width, height);
         this.images = [];
         this.fps = 15;
         this.timeToAnimate = 0;

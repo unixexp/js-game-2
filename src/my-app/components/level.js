@@ -5,10 +5,19 @@ export class Level extends Component {
 
     constructor(app, player) {
         super(app);
+        // Positions
         this.startPosition = 0;
         this.currentPosition = 0;
         this.endPosition = 10000;
+        // Background
         this.backgrounds = [];
+        // Fader
+        this.fadeLength = 0; // sec
+        this.fadeTimer = 0;
+        this.fadeAlpha = 1;
+        this.currentBackgroundIndex = 0;
+        this.nextBackgroundIndex = 0;
+        // Characters and components
         this.player = player;
         this.enemies = [];
         this.artifacts = [];
@@ -22,26 +31,55 @@ export class Level extends Component {
         }
     }
 
+    fader(params) {
+        const backgroundsCount = this.backgrounds.length;
+        if (!backgroundsCount) {
+            this.currentBackgroundIndex = -1;
+            this.nextBackgroundIndex = -1;
+        } else if (backgroundsCount === 1) {
+            this.currentBackgroundIndex = 0;
+            this.nextBackgroundIndex = -1;
+        } else if (this.currentBackgroundIndex >= backgroundsCount-1) {
+            this.nextBackgroundIndex = 0;
+        } else {
+            this.nextBackgroundIndex = this.currentBackgroundIndex + 1;
+        }
+    }
+
     update(params) {
         super.update(params);
+        this.fader(params);
+
+        console.log(this.currentBackgroundIndex);
+        console.log(this.nextBackgroundIndex);
 
         if (this.player.isRunningForward) {
             if (this.currentPosition !== this.endPosition) {
                 this.currentPosition++;
 
-                this.backgrounds.forEach(background => {
-                    background.runForward();
-                    background.update(params);
-                });
+                if (this.currentBackgroundIndex !== -1) {
+                    this.backgrounds[this.currentBackgroundIndex].runForward();
+                    this.backgrounds[this.currentBackgroundIndex].update(params);
+                }
+                
+                if (this.nextBackgroundIndex !== -1) {
+                    this.backgrounds[this.nextBackgroundIndex].runForward();
+                    this.backgrounds[this.nextBackgroundIndex].update(params);
+                }
             }
         } else if (this.player.isRunningBackward) {
             if (this.currentPosition !== this.startPosition) {
                 this.currentPosition--;
 
-                this.backgrounds.forEach(background => {
-                    background.runBackward();
-                    background.update(params);
-                });
+                if (this.currentBackgroundIndex !== -1) {
+                    this.backgrounds[this.currentBackgroundIndex].runBackward();
+                    this.backgrounds[this.currentBackgroundIndex].update(params);
+                }
+                
+                if (this.nextBackgroundIndex !== -1) {
+                    this.backgrounds[this.nextBackgroundIndex].runBackward();
+                    this.backgrounds[this.nextBackgroundIndex].update(params);
+                }
             }
         }
 

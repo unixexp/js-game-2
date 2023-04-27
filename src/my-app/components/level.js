@@ -38,8 +38,9 @@ export class Level extends Component {
         this.fader(params);
 
         if (this.player.isRunningForward) {
-            if (this.app.debug)
+            if (this.app.debug) {
                 console.log(this.currentPosition);
+            }
 
             if (this.currentPosition !== this.endPosition) {
                 this.currentPosition++;
@@ -55,9 +56,10 @@ export class Level extends Component {
                 }
             }
         } else if (this.player.isRunningBackward) {
-            if (this.app.debug)
+            if (this.app.debug) {
                 console.log(this.currentPosition);
-
+            }
+                
             if (this.currentPosition !== this.startPosition) {
                 this.currentPosition--;
 
@@ -73,10 +75,15 @@ export class Level extends Component {
             }
         }
 
-        this.backgrounds.forEach(background => {
-            background.movePermanentLayers();
-            background.update(params);
-        });
+        if (this.currentBackgroundIndex !== -1) {
+            this.backgrounds[this.currentBackgroundIndex].movePermanentLayers();
+            this.backgrounds[this.currentBackgroundIndex].update(params);
+        }
+        
+        if (this.nextBackgroundIndex !== -1) {
+            this.backgrounds[this.nextBackgroundIndex].movePermanentLayers();
+            this.backgrounds[this.nextBackgroundIndex].update(params);
+        }
 
         this.player.update(params);
     }

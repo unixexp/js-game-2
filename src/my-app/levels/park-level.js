@@ -26,7 +26,7 @@ export default class ParkLevel extends Level {
                 new Layer(app, "assets/img/layers/day/light.png", 2, false)
             ])
         ],
-        this.fadeLength = 30;
+        this.fadeLength = 60;
     }
 
     async init() {

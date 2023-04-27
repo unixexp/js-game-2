@@ -15,8 +15,8 @@ export class Level extends Component {
         this.fadeLength = 0; // sec
         this.fadeTimer = 0;
         this.fadeAlpha = 1;
-        this.currentBackgroundIndex = 0;
-        this.nextBackgroundIndex = 0;
+        this.currentBackgroundIndex = -1;
+        this.nextBackgroundIndex = -1;
         // Characters and components
         this.player = player;
         this.enemies = [];
@@ -33,25 +33,43 @@ export class Level extends Component {
 
     fader(params) {
         const backgroundsCount = this.backgrounds.length;
+
         if (!backgroundsCount) {
             this.currentBackgroundIndex = -1;
             this.nextBackgroundIndex = -1;
         } else if (backgroundsCount === 1) {
             this.currentBackgroundIndex = 0;
             this.nextBackgroundIndex = -1;
-        } else if (this.currentBackgroundIndex >= backgroundsCount-1) {
-            this.nextBackgroundIndex = 0;
         } else {
-            this.nextBackgroundIndex = this.currentBackgroundIndex + 1;
+            if (this.fadeLength > 0) {
+                if (this.currentBackgroundIndex == -1) {
+                    this.currentBackgroundIndex = 0;
+                    this.nextBackgroundIndex = this.currentBackgroundIndex + 1;
+                } else {
+                    this.fadeTimer += params.deltaTime;
+                    if (this.fadeTimer >= (1000 * this.fadeLength / 60)) {
+                        this.fadeAlpha -= 0.016;
+                        this.fadeTimer = 0;
+                    }
+
+                    if (this.fadeAlpha <= 0) {
+                        this.currentBackgroundIndex = this.nextBackgroundIndex;
+                        this.nextBackgroundIndex = this.currentBackgroundIndex + 1;
+                        if (this.nextBackgroundIndex > backgroundsCount - 1)
+                            this.nextBackgroundIndex = 0;
+                        this.fadeAlpha = 1;
+                    }
+                }
+            } else {
+                this.currentBackgroundIndex = 0;
+                this.nextBackgroundIndex = -1;
+            }
         }
     }
 
     update(params) {
         super.update(params);
         this.fader(params);
-
-        console.log(this.currentBackgroundIndex);
-        console.log(this.nextBackgroundIndex);
 
         if (this.player.isRunningForward) {
             if (this.currentPosition !== this.endPosition) {
@@ -94,10 +112,12 @@ export class Level extends Component {
     render(params) {
         super.render(params);
 
-        this.backgrounds.forEach(background => {
-            background.position = this.currentPosition;
-            background.render(params);
-        });
+        if (this.nextBackgroundIndex !== -1) {
+            this.backgrounds[this.nextBackgroundIndex].render(params);
+            this.context.globalAlpha = this.fadeAlpha;
+        }
+        this.backgrounds[this.currentBackgroundIndex].render(params);
+        this.context.globalAlpha = 1;
 
         this.player.render(params);
     }

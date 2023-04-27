@@ -16,10 +16,7 @@ export default class GameScreen extends Component {
         await super.init();
 
         try {
-            this.player = new Player(this.app, 50, 290, 230, 160);
-            await this.player.init();
-
-            this.level = new this.levels[0](this.app, this.player);
+            this.level = new this.levels[0](this.app);
             await this.level.init();
         } catch(err) {
             console.log(err);
@@ -31,13 +28,13 @@ export default class GameScreen extends Component {
         super.update(params);
 
         if (params.keys.findIndex(k => k === "ArrowLeft") !== -1) {
-            this.player.runBackward();
+            this.level.player.runBackward();
         } else if (params.keys.findIndex(k => k === "ArrowRight") !== -1) {
-            this.player.runForward();
+            this.level.player.runForward();
         } else if (params.keys.findIndex(k => k === " ") !== -1) {
-            this.player.attack();
+            this.level.player.attack();
         }  else {
-            this.player.idle();
+            this.level.player.idle();
         }
 
         this.level.update(params);

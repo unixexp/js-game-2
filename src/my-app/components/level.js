@@ -3,7 +3,7 @@ import { loadImage } from "../../engine/utils/files";
 
 export class Level extends Component {
 
-    constructor(app, player) {
+    constructor(app) {
         super(app);
         // Positions
         this.startPosition = 0;
@@ -18,7 +18,7 @@ export class Level extends Component {
         this.currentBackgroundIndex = -1;
         this.nextBackgroundIndex = -1;
         // Characters and components
-        this.player = player;
+        this.player = null;
         this.enemies = [];
         this.artifacts = [];
     }
@@ -29,6 +29,69 @@ export class Level extends Component {
         for (const background of this.backgrounds) {
             await background.init();
         }
+
+        await this.player.init();
+    }
+
+    update(params) {
+        super.update(params);
+        this.fader(params);
+
+        if (this.player.isRunningForward) {
+            if (this.app.debug)
+                console.log(this.currentPosition);
+
+            if (this.currentPosition !== this.endPosition) {
+                this.currentPosition++;
+
+                if (this.currentBackgroundIndex !== -1) {
+                    this.backgrounds[this.currentBackgroundIndex].runForward();
+                    this.backgrounds[this.currentBackgroundIndex].update(params);
+                }
+                
+                if (this.nextBackgroundIndex !== -1) {
+                    this.backgrounds[this.nextBackgroundIndex].runForward();
+                    this.backgrounds[this.nextBackgroundIndex].update(params);
+                }
+            }
+        } else if (this.player.isRunningBackward) {
+            if (this.app.debug)
+                console.log(this.currentPosition);
+
+            if (this.currentPosition !== this.startPosition) {
+                this.currentPosition--;
+
+                if (this.currentBackgroundIndex !== -1) {
+                    this.backgrounds[this.currentBackgroundIndex].runBackward();
+                    this.backgrounds[this.currentBackgroundIndex].update(params);
+                }
+                
+                if (this.nextBackgroundIndex !== -1) {
+                    this.backgrounds[this.nextBackgroundIndex].runBackward();
+                    this.backgrounds[this.nextBackgroundIndex].update(params);
+                }
+            }
+        }
+
+        this.backgrounds.forEach(background => {
+            background.movePermanentLayers();
+            background.update(params);
+        });
+
+        this.player.update(params);
+    }
+
+    render(params) {
+        super.render(params);
+
+        if (this.nextBackgroundIndex !== -1) {
+            this.backgrounds[this.nextBackgroundIndex].render(params);
+            this.context.globalAlpha = this.fadeAlpha;
+        }
+        this.backgrounds[this.currentBackgroundIndex].render(params);
+        this.context.globalAlpha = 1;
+
+        this.player.render(params);
     }
 
     fader(params) {
@@ -65,61 +128,6 @@ export class Level extends Component {
                 this.nextBackgroundIndex = -1;
             }
         }
-    }
-
-    update(params) {
-        super.update(params);
-        this.fader(params);
-
-        if (this.player.isRunningForward) {
-            if (this.currentPosition !== this.endPosition) {
-                this.currentPosition++;
-
-                if (this.currentBackgroundIndex !== -1) {
-                    this.backgrounds[this.currentBackgroundIndex].runForward();
-                    this.backgrounds[this.currentBackgroundIndex].update(params);
-                }
-                
-                if (this.nextBackgroundIndex !== -1) {
-                    this.backgrounds[this.nextBackgroundIndex].runForward();
-                    this.backgrounds[this.nextBackgroundIndex].update(params);
-                }
-            }
-        } else if (this.player.isRunningBackward) {
-            if (this.currentPosition !== this.startPosition) {
-                this.currentPosition--;
-
-                if (this.currentBackgroundIndex !== -1) {
-                    this.backgrounds[this.currentBackgroundIndex].runBackward();
-                    this.backgrounds[this.currentBackgroundIndex].update(params);
-                }
-                
-                if (this.nextBackgroundIndex !== -1) {
-                    this.backgrounds[this.nextBackgroundIndex].runBackward();
-                    this.backgrounds[this.nextBackgroundIndex].update(params);
-                }
-            }
-        }
-
-        this.backgrounds.forEach(background => {
-            background.movePermanentLayers();
-            background.update(params);
-        });
-
-        this.player.update(params);
-    }
-
-    render(params) {
-        super.render(params);
-
-        if (this.nextBackgroundIndex !== -1) {
-            this.backgrounds[this.nextBackgroundIndex].render(params);
-            this.context.globalAlpha = this.fadeAlpha;
-        }
-        this.backgrounds[this.currentBackgroundIndex].render(params);
-        this.context.globalAlpha = 1;
-
-        this.player.render(params);
     }
 
 }

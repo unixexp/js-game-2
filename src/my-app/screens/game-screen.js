@@ -1,13 +1,13 @@
 import Component from "../../engine/components/component";
-import { Player } from "../components/player";
 import ErrorScreen from "./error-screen";
 import ParkLevel from "../levels/park-level";
+import MetroLevel from "../levels/metro-level";
 
 export default class GameScreen extends Component {
 
     constructor(app, x, y, width, height) {
         super(app, x, y, width, height);
-        this.levels = [ParkLevel]
+        this.levels = [MetroLevel]
         this.player = null;
         this.level = null;
     }

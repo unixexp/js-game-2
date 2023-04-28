@@ -31,9 +31,9 @@ export default class ParkLevel extends Level {
             ])
         ];
         this.fadeLength = 60;
-        this.player = new Player(this.app, 150, 290, 230, 160);
+        this.player = new Player(this.app, 100, 290, 230, 160);
         this.enemies = [
-            new DragonEnemy(this.app, 1000, 290, 230, 160, "ground"),
+            new DragonEnemy(this.app, 700, 290, 230, 160, "ground"),
             // new Enemy(this.app, 10000, 290, 230, 160, "ground")
         ];
     }

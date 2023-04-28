@@ -29,7 +29,6 @@ export class Enemy extends Component {
     update(params) {
         super.update(params);
         this.x = this.x + this.layer.currentSpeed - this.currentSpeed;
-        console.log(`${this.x} <> ${this.layer.position}`);
     }
 
     render(params) {
@@ -90,7 +89,7 @@ export class Enemy extends Component {
     }
 
     checkVisibility(component) {
-        const distance = component.x + component.width - this.startSrcX + this.x;
+        const distance = this.x - (component.x + component.width);
         console.log(`Distance: ${distance}`);
         if (distance <= this.visibility && !this.checkCollision(component)) {
             return true;

@@ -8,7 +8,7 @@ export class DragonEnemy extends Enemy {
         this.spriteWidth = 230;
         this.spriteHeight = 160;
         this.startSrcX = 70;
-        this.visibility = 900;
+        this.visibility = 300;
     }
 
     async init() {

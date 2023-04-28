@@ -1,13 +1,13 @@
-import { Enemy } from "../components/enemy";
 import { Level, Background, Layer } from "../components/level";
 import { Player } from "../components/player";
+import { DragonEnemy } from "../enemies/dragon-enemy";
 
 export default class ParkLevel extends Level {
 
     constructor(app) {
         super(app);
         this.startPosition = 0;
-        this.endPosition = 1000;
+        this.endPosition = 2000;
         this.backgrounds = [
             new Background(app, this, [
                 new Layer(app, "sky", "assets/img/layers/day/sky.png", 0.1, false),
@@ -33,8 +33,8 @@ export default class ParkLevel extends Level {
         this.fadeLength = 60;
         this.player = new Player(this.app, 150, 290, 230, 160);
         this.enemies = [
-            new Enemy(this.app, 716, 290, 230, 160, "ground"),
-            new Enemy(this.app, 10000, 290, 230, 160, "ground")
+            new DragonEnemy(this.app, 1000, 290, 230, 160, "ground"),
+            // new Enemy(this.app, 10000, 290, 230, 160, "ground")
         ];
     }
 

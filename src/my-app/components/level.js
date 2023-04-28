@@ -68,7 +68,8 @@ export class Level extends Component {
                 // Update enemies
                 console.log( `LayerX: ${this.mainSpeedLayer.position}` );
                 this.enemies.forEach(enemy => {
-                    enemy.x = enemy.x - this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
+                    const enemyLayer = this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex];
+                    enemy.x = enemy.x - enemyLayer.speed - enemy.currentSpeed;
                     console.log(`EnemyX: ${enemy.x}`);
                     enemy.update(params);
                 })
@@ -86,7 +87,8 @@ export class Level extends Component {
                 // Update enemies
                 console.log( `LayerX: ${this.mainSpeedLayer.position}` );
                 this.enemies.forEach(enemy => {
-                    enemy.x = enemy.x + this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
+                    const enemyLayer = this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex];
+                    enemy.x = enemy.x + enemyLayer.speed - enemy.currentSpeed;
                     console.log(`EnemyX: ${enemy.x}`);
                     enemy.update(params);
                 })
@@ -108,6 +110,12 @@ export class Level extends Component {
             this.backgrounds[this.nextBackgroundIndex].update(params);
         }
 
+        this.enemies.forEach(enemy => {
+            if (enemy.checkVisibility(this.player)) {
+                enemy.run();
+            }
+        });
+        
         this.player.update(params);
     }
 

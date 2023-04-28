@@ -12,13 +12,18 @@ export class Enemy extends Component {
         this.srcY = 0;
         this.imageIdle = null;
         this.layerName = layerName;
-        this.layerIndx = 0; // Will set by level
+        // Will set by level
+        this.layerIndx = 0;
+        // Distance between enemy and oponent
+        // when enemy will start run
+        this.visibility = 0;
+        this.isAttacking = false;
+        this.speed = 1;
+        this.currentSpeed = 0;
     }
 
     async init() {
         await super.init();
-
-        this.imageIdle = await loadImage("assets/img/characters/dragon-enemy-idle.png");
     }
 
     update(params) {
@@ -48,6 +53,48 @@ export class Enemy extends Component {
             this.app.scaleByX(this.width),
             this.app.scaleByY(this.height)
         );
+    }
+
+    idle() {
+        this.isRunning = false;
+        this.isAttacking = false;
+        this.isIdle = true;
+        this.currentSpeed = 0;
+        console.log(`Enemy #${this.id} idle`);
+    }
+
+    run() {
+        this.isRunning = true;
+        this.isAttacking = false;
+        this.isIdle = false;
+        this.currentSpeed = this.speed;
+        console.log(`Enemy #${this.id} start run`);
+    }
+
+    attack() {
+        this.isRunning = false;
+        this.isAttacking = true;
+        this.isIdle = false;
+        this.currentSpeed = 0;
+        console.log(`Enemy #${this.id} start attack`);
+    }
+
+    checkCollision(component) {
+        if (this.x < component.x + component.width - this.startSrcX && this.x > component.x) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    checkVisibility(component) {
+        const distance = component.x + component.width - this.startSrcX + this.x;
+        console.log(`Distance: ${distance}`);
+        if (distance <= this.visibility && !this.checkCollision(component)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

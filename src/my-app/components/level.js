@@ -5,10 +5,6 @@ export class Level extends Component {
 
     constructor(app) {
         super(app);
-        // Positions
-        this.startPosition = 0;
-        this.currentPosition = 0;
-        this.endPosition = 10000;
         // Background
         this.backgrounds = [];
         // Fader
@@ -30,6 +26,16 @@ export class Level extends Component {
             await background.init();
         }
 
+        for (const enemy of this.enemies) {
+            await enemy.init();
+            try {
+                enemy.layerIndex = this.backgrounds[0].layers.findIndex(layer => layer.name === enemy.layerName);
+            } catch(err) {
+                console.log(err);
+                this.enemies = [];
+            }
+        }
+
         await this.player.init();
     }
 
@@ -38,40 +44,40 @@ export class Level extends Component {
         this.fader(params);
 
         if (this.player.isRunningForward) {
-            if (this.app.debug) {
-                console.log(this.currentPosition);
-            }
+            if (this.currentBackgroundIndex !== -1) {
+                this.backgrounds[this.currentBackgroundIndex].runForward();
+                this.backgrounds[this.currentBackgroundIndex].update(params);
 
-            if (this.currentPosition !== this.endPosition) {
-                this.currentPosition++;
-
-                if (this.currentBackgroundIndex !== -1) {
-                    this.backgrounds[this.currentBackgroundIndex].runForward();
-                    this.backgrounds[this.currentBackgroundIndex].update(params);
-                }
-                
-                if (this.nextBackgroundIndex !== -1) {
-                    this.backgrounds[this.nextBackgroundIndex].runForward();
-                    this.backgrounds[this.nextBackgroundIndex].update(params);
-                }
+                // Update enemies
+                console.log( `LayerX: ${this.backgrounds[this.currentBackgroundIndex].layers[7].position}` );
+                this.enemies.forEach(enemy => {
+                    enemy.x = enemy.x - this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
+                    console.log(`EnemyX: ${enemy.x}`);
+                    enemy.update(params);
+                })
             }
-        } else if (this.player.isRunningBackward) {
-            if (this.app.debug) {
-                console.log(this.currentPosition);
+            
+            if (this.nextBackgroundIndex !== -1) {
+                this.backgrounds[this.nextBackgroundIndex].runForward();
+                this.backgrounds[this.nextBackgroundIndex].update(params);
             }
-                
-            if (this.currentPosition !== this.startPosition) {
-                this.currentPosition--;
+        } else if (this.player.isRunningBackward) {                
+            if (this.currentBackgroundIndex !== -1) {
+                this.backgrounds[this.currentBackgroundIndex].runBackward();
+                this.backgrounds[this.currentBackgroundIndex].update(params);
 
-                if (this.currentBackgroundIndex !== -1) {
-                    this.backgrounds[this.currentBackgroundIndex].runBackward();
-                    this.backgrounds[this.currentBackgroundIndex].update(params);
-                }
-                
-                if (this.nextBackgroundIndex !== -1) {
-                    this.backgrounds[this.nextBackgroundIndex].runBackward();
-                    this.backgrounds[this.nextBackgroundIndex].update(params);
-                }
+                // Update enemies
+                console.log( `LayerX: ${this.backgrounds[this.currentBackgroundIndex].layers[7].position}` );
+                this.enemies.forEach(enemy => {
+                    enemy.x = enemy.x + this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
+                    console.log(`EnemyX: ${enemy.x}`);
+                    enemy.update(params);
+                })
+            }
+            
+            if (this.nextBackgroundIndex !== -1) {
+                this.backgrounds[this.nextBackgroundIndex].runBackward();
+                this.backgrounds[this.nextBackgroundIndex].update(params);
             }
         }
 
@@ -97,6 +103,10 @@ export class Level extends Component {
         }
         this.backgrounds[this.currentBackgroundIndex].render(params);
         this.context.globalAlpha = 1;
+
+        this.enemies.forEach(enemy => {
+            enemy.render(params);
+        })
 
         this.player.render(params);
     }
@@ -193,8 +203,9 @@ export class Background extends Component {
                 layer.x2 = layer.width + layer.x1;
             }
     
-            layer.x1-= layer.speed;
-            layer.x2-= layer.speed;
+            layer.x1 -= layer.speed;
+            layer.x2 -= layer.speed;
+            layer.position -= layer.speed;
         });
     }
 
@@ -210,6 +221,8 @@ export class Background extends Component {
     
             layer.x1 += layer.speed;
             layer.x2 += layer.speed;
+
+            layer.position += layer.speed;
         });
     }
 
@@ -217,12 +230,14 @@ export class Background extends Component {
 
 export class Layer extends Component {
 
-    constructor(app, imageURL, speed, permanent) {
+    constructor(app, name, imageURL, speed, permanent) {
         super(app);
+        this.name = name;
         this.imageURL = imageURL;
         this.image = null;
         this.width = 0;
         this.height = 0;
+        this.position = 0;
         this.x1 = 0;
         this.x2 = 0;
         this.speed = speed;

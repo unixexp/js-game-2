@@ -29,6 +29,7 @@ export class Enemy extends Component {
     update(params) {
         super.update(params);
         this.x = this.x + this.layer.currentSpeed;
+        console.log(`${this.x} <> ${this.layer.position}`);
     }
 
     render(params) {

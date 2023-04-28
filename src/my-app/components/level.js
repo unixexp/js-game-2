@@ -8,7 +8,7 @@ export class Level extends Component {
         // Level speed and length
         this.startPosition = 0;
         this.endPosition = 999999;
-        this.speed = 3;
+        this.speed = 2;
         // Background
         this.backgrounds = [];
         // Fader
@@ -91,14 +91,6 @@ export class Level extends Component {
                 this.backgrounds[this.nextBackgroundIndex].idle();
                 this.backgrounds[this.nextBackgroundIndex].update(params);
             }
-        }
-
-        if (this.currentBackgroundIndex !== -1) {
-            this.backgrounds[this.currentBackgroundIndex].update(params);
-        }
-        
-        if (this.nextBackgroundIndex !== -1) {
-            this.backgrounds[this.nextBackgroundIndex].update(params);
         }
 
         this.enemies.forEach(enemy => {
@@ -258,6 +250,7 @@ export class Layer extends Component {
         if (this.permanent) {
             this.x1 -= this.speed;
             this.x2 -= this.speed;
+            this.position -= this.speed;
         }
 
         this.x1 += this.currentSpeed;

@@ -20,7 +20,7 @@ export default class GameScreen extends Component {
             await this.level.init();
         } catch(err) {
             console.log(err);
-            this.app.setComponent(new ErrorScreen(this.app, err));
+            this.app.setComponent(new ErrorScreen(this.app, err.toString()));
         }
     }
 

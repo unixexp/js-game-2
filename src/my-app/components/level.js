@@ -5,6 +5,10 @@ export class Level extends Component {
 
     constructor(app) {
         super(app);
+        // Level speed and length
+        this.startPosition = 0;
+        this.endPosition = 999999;
+        this.speed = 5;
         // Background
         this.backgrounds = [];
         // Fader
@@ -17,6 +21,7 @@ export class Level extends Component {
         this.player = null;
         this.enemies = [];
         this.artifacts = [];
+        this.mainSpeedLayer = null;
     }
 
     async init() {
@@ -24,7 +29,19 @@ export class Level extends Component {
 
         for (const background of this.backgrounds) {
             await background.init();
+
+            
+            if (this.mainSpeedLayer == null) {
+                const mainSpeedLayerIndex = background.layers.findIndex(layer => layer.speedModifier == 1 ) ;
+            
+                if (mainSpeedLayerIndex != -1)
+                    this.mainSpeedLayer = background.layers[mainSpeedLayerIndex];
+            }
         }
+
+        if (this.mainSpeedLayer == null)
+            throw new Error("At least one of layers should have speed modifier = 1" +
+                " for correct level position definition")
 
         for (const enemy of this.enemies) {
             await enemy.init();
@@ -43,13 +60,13 @@ export class Level extends Component {
         super.update(params);
         this.fader(params);
 
-        if (this.player.isRunningForward) {
+        if (this.player.isRunningForward && -this.mainSpeedLayer.position < this.endPosition) {
             if (this.currentBackgroundIndex !== -1) {
                 this.backgrounds[this.currentBackgroundIndex].runForward();
                 this.backgrounds[this.currentBackgroundIndex].update(params);
 
                 // Update enemies
-                console.log( `LayerX: ${this.backgrounds[this.currentBackgroundIndex].layers[7].position}` );
+                console.log( `LayerX: ${this.mainSpeedLayer.position}` );
                 this.enemies.forEach(enemy => {
                     enemy.x = enemy.x - this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
                     console.log(`EnemyX: ${enemy.x}`);
@@ -61,13 +78,13 @@ export class Level extends Component {
                 this.backgrounds[this.nextBackgroundIndex].runForward();
                 this.backgrounds[this.nextBackgroundIndex].update(params);
             }
-        } else if (this.player.isRunningBackward) {                
+        } else if (this.player.isRunningBackward && -this.mainSpeedLayer.position > this.startPosition) {                
             if (this.currentBackgroundIndex !== -1) {
                 this.backgrounds[this.currentBackgroundIndex].runBackward();
                 this.backgrounds[this.currentBackgroundIndex].update(params);
 
                 // Update enemies
-                console.log( `LayerX: ${this.backgrounds[this.currentBackgroundIndex].layers[7].position}` );
+                console.log( `LayerX: ${this.mainSpeedLayer.position}` );
                 this.enemies.forEach(enemy => {
                     enemy.x = enemy.x + this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex].speed;
                     console.log(`EnemyX: ${enemy.x}`);
@@ -151,8 +168,9 @@ export class Level extends Component {
 
 export class Background extends Component {
 
-    constructor(app, layers) {
+    constructor(app, level, layers) {
         super(app);
+        this.level = level;
         this.layers = layers;
         this.permanentLayers = this.layers.filter(layer => layer.permanent);
     }
@@ -162,6 +180,7 @@ export class Background extends Component {
 
         for (const layer of this.layers) {
             await layer.init();
+            layer.speed = this.level.speed * layer.speedModifier;
         }
     }
 
@@ -230,7 +249,7 @@ export class Background extends Component {
 
 export class Layer extends Component {
 
-    constructor(app, name, imageURL, speed, permanent) {
+    constructor(app, name, imageURL, speedModifier, permanent) {
         super(app);
         this.name = name;
         this.imageURL = imageURL;
@@ -240,7 +259,8 @@ export class Layer extends Component {
         this.position = 0;
         this.x1 = 0;
         this.x2 = 0;
-        this.speed = speed;
+        this.speedModifier = speedModifier;
+        this.speed = 0;
         this.permanent = permanent;
     }
 

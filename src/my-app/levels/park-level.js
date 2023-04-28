@@ -10,24 +10,24 @@ export default class ParkLevel extends Level {
         this.endPosition = 2000;
         this.backgrounds = [
             new Background(app, this, [
-                new Layer(app, "sky", "assets/img/layers/day/sky.png", 0.1, false),
-                new Layer(app, "clouds", "assets/img/layers/day/clouds.png", 0.15, true),
-                new Layer(app, "landscape-far", "assets/img/layers/day/landscape-far.png", 0.25, false),
-                new Layer(app, "andscape-middle", "assets/img/layers/day/landscape-middle.png", 0.5, false),
-                new Layer(app, "front", "assets/img/layers/day/front.png", 0.5, false),
-                new Layer(app, "trees", "assets/img/layers/day/trees.png", 0.5, false),
-                new Layer(app, "ground", "assets/img/layers/day/ground.png", 1, false),
-                new Layer(app, "light", "assets/img/layers/day/light.png", 1, false)
+                new Layer(app, "sky", "assets/img/levels/park-level/day/sky.png", 0.1, false),
+                new Layer(app, "clouds", "assets/img/levels/park-level/day/clouds.png", 0.15, true),
+                new Layer(app, "landscape-far", "assets/img/levels/park-level/day/landscape-far.png", 0.25, false),
+                new Layer(app, "andscape-middle", "assets/img/levels/park-level/day/landscape-middle.png", 0.5, false),
+                new Layer(app, "front", "assets/img/levels/park-level/day/front.png", 0.5, false),
+                new Layer(app, "trees", "assets/img/levels/park-level/day/trees.png", 0.5, false),
+                new Layer(app, "ground", "assets/img/levels/park-level/day/ground.png", 1, false),
+                new Layer(app, "light", "assets/img/levels/park-level/day/light.png", 1, false)
             ]),
             new Background(app, this, [
-                new Layer(app, "sky", "assets/img/layers/night/sky.png", 0.1, false),
-                new Layer(app, "clouds", "assets/img/layers/night/clouds.png", 0.15, true),
-                new Layer(app, "landscape-far", "assets/img/layers/night/landscape-far.png", 0.25, false),
-                new Layer(app, "andscape-middle", "assets/img/layers/night/landscape-middle.png", 0.5, false),
-                new Layer(app, "front", "assets/img/layers/night/front.png", 0.5, false),
-                new Layer(app, "trees", "assets/img/layers/night/trees.png", 0.5, false),
-                new Layer(app, "ground", "assets/img/layers/night/ground.png", 1, false),
-                new Layer(app, "light", "assets/img/layers/night/light.png", 1, false)
+                new Layer(app, "sky", "assets/img/levels/park-level/night/sky.png", 0.1, false),
+                new Layer(app, "clouds", "assets/img/levels/park-level/night/clouds.png", 0.15, true),
+                new Layer(app, "landscape-far", "assets/img/levels/park-level/night/landscape-far.png", 0.25, false),
+                new Layer(app, "andscape-middle", "assets/img/levels/park-level/night/landscape-middle.png", 0.5, false),
+                new Layer(app, "front", "assets/img/levels/park-level/night/front.png", 0.5, false),
+                new Layer(app, "trees", "assets/img/levels/park-level/night/trees.png", 0.5, false),
+                new Layer(app, "ground", "assets/img/levels/park-level/night/ground.png", 1, false),
+                new Layer(app, "light", "assets/img/levels/park-level/night/light.png", 1, false)
             ])
         ];
         this.fadeLength = 60;

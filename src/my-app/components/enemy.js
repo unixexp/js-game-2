@@ -13,7 +13,7 @@ export class Enemy extends Component {
         this.imageIdle = null;
         this.layerName = layerName;
         // Will set by level
-        this.layerIndx = 0;
+        this.layer = null;
         // Distance between enemy and oponent
         // when enemy will start run
         this.visibility = 0;
@@ -28,6 +28,7 @@ export class Enemy extends Component {
 
     update(params) {
         super.update(params);
+        this.x = this.x + this.layer.currentSpeed;
     }
 
     render(params) {

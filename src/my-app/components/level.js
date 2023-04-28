@@ -8,7 +8,7 @@ export class Level extends Component {
         // Level speed and length
         this.startPosition = 0;
         this.endPosition = 999999;
-        this.speed = 5;
+        this.speed = 3;
         // Background
         this.backgrounds = [];
         // Fader
@@ -46,7 +46,8 @@ export class Level extends Component {
         for (const enemy of this.enemies) {
             await enemy.init();
             try {
-                enemy.layerIndex = this.backgrounds[0].layers.findIndex(layer => layer.name === enemy.layerName);
+                const layerIndex = this.backgrounds[0].layers.findIndex(layer => layer.name === enemy.layerName);
+                enemy.layer = this.backgrounds[0].layers[layerIndex];
             } catch(err) {
                 console.log(err);
                 this.enemies = [];
@@ -64,15 +65,6 @@ export class Level extends Component {
             if (this.currentBackgroundIndex !== -1) {
                 this.backgrounds[this.currentBackgroundIndex].runForward();
                 this.backgrounds[this.currentBackgroundIndex].update(params);
-
-                // Update enemies
-                console.log( `LayerX: ${this.mainSpeedLayer.position}` );
-                this.enemies.forEach(enemy => {
-                    const enemyLayer = this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex];
-                    enemy.x = enemy.x - enemyLayer.speed - enemy.currentSpeed;
-                    console.log(`EnemyX: ${enemy.x}`);
-                    enemy.update(params);
-                })
             }
             
             if (this.nextBackgroundIndex !== -1) {
@@ -83,30 +75,29 @@ export class Level extends Component {
             if (this.currentBackgroundIndex !== -1) {
                 this.backgrounds[this.currentBackgroundIndex].runBackward();
                 this.backgrounds[this.currentBackgroundIndex].update(params);
-
-                // Update enemies
-                console.log( `LayerX: ${this.mainSpeedLayer.position}` );
-                this.enemies.forEach(enemy => {
-                    const enemyLayer = this.backgrounds[this.currentBackgroundIndex].layers[enemy.layerIndex];
-                    enemy.x = enemy.x + enemyLayer.speed - enemy.currentSpeed;
-                    console.log(`EnemyX: ${enemy.x}`);
-                    enemy.update(params);
-                })
             }
             
             if (this.nextBackgroundIndex !== -1) {
                 this.backgrounds[this.nextBackgroundIndex].runBackward();
                 this.backgrounds[this.nextBackgroundIndex].update(params);
             }
+        } else {
+            if (this.currentBackgroundIndex !== -1) {
+                this.backgrounds[this.currentBackgroundIndex].idle();
+                this.backgrounds[this.currentBackgroundIndex].update(params);
+            }
+            
+            if (this.nextBackgroundIndex !== -1) {
+                this.backgrounds[this.nextBackgroundIndex].idle();
+                this.backgrounds[this.nextBackgroundIndex].update(params);
+            }
         }
 
         if (this.currentBackgroundIndex !== -1) {
-            this.backgrounds[this.currentBackgroundIndex].movePermanentLayers();
             this.backgrounds[this.currentBackgroundIndex].update(params);
         }
         
         if (this.nextBackgroundIndex !== -1) {
-            this.backgrounds[this.nextBackgroundIndex].movePermanentLayers();
             this.backgrounds[this.nextBackgroundIndex].update(params);
         }
 
@@ -114,6 +105,7 @@ export class Level extends Component {
             if (enemy.checkVisibility(this.player)) {
                 enemy.run();
             }
+            enemy.update(params);
         });
         
         this.player.update(params);
@@ -189,68 +181,30 @@ export class Background extends Component {
         for (const layer of this.layers) {
             await layer.init();
             layer.speed = this.level.speed * layer.speedModifier;
+            layer.currentSpeed = 0;
         }
     }
 
     update(params) {
         super.update(params);
-
         this.layers.forEach(layer => layer.update(params));
     }
 
     render(params) {
         super.update(params);
-
         this.layers.forEach(layer => layer.render(params));
     }
 
-    movePermanentLayers() {
-        
-        this.permanentLayers.forEach(layer => {
-            if (layer.x1 < -layer.width) {
-                layer.x1 = layer.width + layer.x2;
-            }
-    
-            if (layer.x2 < -layer.width) {
-                layer.x2 = layer.width + layer.x1;
-            }
-    
-            layer.x1-= layer.speed;
-            layer.x2-= layer.speed;
-        });
+    idle() {
+        this.layers.forEach(layer => layer.currentSpeed = 0);
     }
 
     runForward() {
-        this.layers.forEach(layer => {
-            if (layer.x1 < -layer.width) {
-                layer.x1 = layer.width + layer.x2;
-            }
-    
-            if (layer.x2 < -layer.width) {
-                layer.x2 = layer.width + layer.x1;
-            }
-    
-            layer.x1 -= layer.speed;
-            layer.x2 -= layer.speed;
-            layer.position -= layer.speed;
-        });
+        this.layers.forEach(layer => layer.currentSpeed = -layer.speed);
     }
 
     runBackward() {
-        this.layers.forEach(layer => {
-            if (layer.x1 > layer.width) {
-                layer.x1 = layer.x2 - layer.width;
-            }
-    
-            if (layer.x2 > layer.width) {
-                layer.x2 = layer.x1 - layer.width;
-            }
-    
-            layer.x1 += layer.speed;
-            layer.x2 += layer.speed;
-
-            layer.position += layer.speed;
-        });
+        this.layers.forEach(layer => layer.currentSpeed = layer.speed);
     }
 
 }
@@ -284,6 +238,31 @@ export class Layer extends Component {
 
     update(params) {
         super.update(params);
+
+        if (this.x1 < -this.width) {
+            this.x1 = this.width + this.x2;
+        }
+
+        if (this.x2 < -this.width) {
+            this.x2 = this.width + this.x1;
+        }
+
+        if (this.x1 > this.width) {
+            this.x1 = this.x2 - this.width;
+        }
+
+        if (this.x2 > this.width) {
+            this.x2 = this.x1 - this.width;
+        }
+
+        if (this.permanent) {
+            this.x1 -= this.speed;
+            this.x2 -= this.speed;
+        }
+
+        this.x1 += this.currentSpeed;
+        this.x2 += this.currentSpeed;
+        this.position += this.currentSpeed;
     }
 
     render(params) {

@@ -61,6 +61,20 @@ export class Level extends Component {
         super.update(params);
         this.fader(params);
 
+        let playerBlockedForward = false;
+        this.enemies.forEach(enemy => {
+            if (enemy.checkCollision(this.player)) {
+                playerBlockedForward = true;
+                enemy.attack();
+            } else if (enemy.checkVisibility(this.player)) {
+                enemy.run();
+            }
+            enemy.update(params);
+        });
+        
+        this.player.blockedForward = playerBlockedForward;
+        this.player.update(params);
+
         if (this.player.isRunningForward && -this.mainSpeedLayer.position < this.endPosition) {
             if (this.currentBackgroundIndex !== -1) {
                 this.backgrounds[this.currentBackgroundIndex].runForward();
@@ -92,15 +106,6 @@ export class Level extends Component {
                 this.backgrounds[this.nextBackgroundIndex].update(params);
             }
         }
-
-        this.enemies.forEach(enemy => {
-            if (enemy.checkVisibility(this.player)) {
-                enemy.run();
-            }
-            enemy.update(params);
-        });
-        
-        this.player.update(params);
     }
 
     render(params) {

@@ -34,6 +34,8 @@ export class Player extends Component {
         this.animateInterval = 50;
         this.health = 100;
         this.died = false;
+        this.blockedForward = false;
+        this.blockedBackward = false;
     }
 
     async init() {
@@ -190,7 +192,7 @@ export class Player extends Component {
     }
 
     runForward() {
-        if (this.state !== PLAYER_STATE_RUN_FORWARD && !this.died && !this.isAttacking) {
+        if (this.state !== PLAYER_STATE_RUN_FORWARD && !this.died && !this.isAttacking && !this.blockedForward) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;
@@ -203,7 +205,7 @@ export class Player extends Component {
     }
 
     runBackward() {
-        if (this.state !== PLAYER_STATE_RUN_BACKWARD && !this.died) {
+        if (this.state !== PLAYER_STATE_RUN_BACKWARD && !this.died && !this.isAttacking && !this.blockedBackward) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;

@@ -66,6 +66,8 @@ export class Level extends Component {
             if (enemy.checkCollision(this.player)) {
                 this.player.forwardCollisions++;
                 enemy.attack();
+            } else if (enemy.checkVisibility(this.player)) {
+                enemy.run();
             } else {
                 if (this.player.forwardCollisions > 0) {
                     this.player.forwardCollisions--;
@@ -73,10 +75,7 @@ export class Level extends Component {
                     this.player.forwardCollisions = 0;
                 }
             }
-            
-            //if (enemy.checkVisibility(this.player)) {
-            //    enemy.run();
-            //}
+
             enemy.update(params);
         });
         

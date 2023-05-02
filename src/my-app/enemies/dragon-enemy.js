@@ -1,5 +1,5 @@
 import { loadImage } from "../../engine/utils/files";
-import { Enemy } from "../components/enemy";
+import { Enemy, ENEMY_STATE_IDLE, ENEMY_STATE_RUN, ENEMY_STATE_ATTACK, ENEMY_STATE_DIE } from "../components/enemy";
 
 export class DragonEnemy extends Enemy {
 
@@ -8,12 +8,19 @@ export class DragonEnemy extends Enemy {
         this.spriteWidth = 230;
         this.spriteHeight = 160;
         this.startSrcX = 70;
+        this.stepSrcX = 300;
         this.visibility = 350;
+
+        this.stateData = [
+            { url: "assets/img/characters/dragon-enemy-idle.png", lastLineFrame: 4, lastFrame: 24 },
+            { url: "assets/img/characters/dragon-enemy-run.png", lastLineFrame: 4, lastFrame: 40 },
+            { url: "assets/img/characters/dragon-enemy-attack.png", lastLineFrame: 4, lastFrame: 20 },
+            { url: "assets/img/characters/dragon-enemy-die.png", lastLineFrame: 4, lastFrame: 24 },
+        ];
     }
 
     async init() {
         await super.init();
-        this.imageIdle = await loadImage("assets/img/characters/dragon-enemy-idle.png");
     }
 
     update(params) {

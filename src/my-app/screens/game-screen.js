@@ -7,7 +7,7 @@ export default class GameScreen extends Component {
 
     constructor(app, x, y, width, height) {
         super(app, x, y, width, height);
-        this.levels = [MetroLevel]
+        this.levels = [ParkLevel]
         this.player = null;
         this.level = null;
     }

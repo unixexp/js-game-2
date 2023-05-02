@@ -1,25 +1,40 @@
 import Component from "../../engine/components/component";
 import { loadImage } from "../../engine/utils/files";
 
+export const ENEMY_STATE_IDLE = 1;
+export const ENEMY_STATE_RUN = 2;
+export const ENEMY_STATE_ATTACK = 3;
+export const ENEMY_STATE_DIE = 4;
+
 export class Enemy extends Component {
 
     constructor(app, x, y, width, height, layerName) {
         super(app, x, y, width, height, layerName);
-        this.spriteWidth = 230;
-        this.spriteHeight = 160;
-        this.startSrcX = 70;
+        this.spriteWidth = 0;
+        this.spriteHeight = 0;
+        this.startSrcX = 0;
         this.srcX = this.startSrcX;
         this.srcY = 0;
-        this.imageIdle = null;
         this.layerName = layerName;
         // Will set by level
         this.layer = null;
         // Distance between enemy and oponent
         // when enemy will start run
         this.visibility = 0;
-        this.isAttacking = false;
+        this.health = 100;
+        this.strength = 5;
         this.speed = 1;
         this.currentSpeed = 0;
+        // Resorces
+        this.imageIdleURL = null;
+        this.imageIdle = null;
+        // State
+        this.state = ENEMY_STATE_IDLE;
+        this.isAttacking = false;
+        this.isRunning = false;
+        this.isIdle = true;
+        this.isDying = false;
+        this.died = false;
     }
 
     async init() {
@@ -81,7 +96,7 @@ export class Enemy extends Component {
     }
 
     checkCollision(component) {
-        if (this.x < component.x + component.width - this.startSrcX && this.x > component.x) {
+        if (!this.died && this.x < component.x + component.width - this.startSrcX && this.x > component.x) {
             return true;
         } else {
             return false;
@@ -90,7 +105,6 @@ export class Enemy extends Component {
 
     checkVisibility(component) {
         const distance = this.x - (component.x + component.width);
-        console.log(`Distance: ${distance}`);
         if (distance <= this.visibility && !this.checkCollision(component)) {
             return true;
         } else {

@@ -24,4 +24,13 @@ export class DragonEnemy extends Enemy {
         super.render(params);
     }
 
+    checkCollision(component) {
+        if (this.x < component.x + component.width - this.startSrcX * 2
+                && this.x - this.startSrcX > component.x) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

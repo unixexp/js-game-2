@@ -36,6 +36,8 @@ export class Player extends Component {
         this.died = false;
         this.blockedForward = false;
         this.blockedBackward = false;
+        this.forwardCollisions = 0;
+        this.backwardCollisions = 0;
     }
 
     async init() {
@@ -192,7 +194,12 @@ export class Player extends Component {
     }
 
     runForward() {
-        if (this.state !== PLAYER_STATE_RUN_FORWARD && !this.died && !this.isAttacking && !this.blockedForward) {
+        if (this.forwardCollisions) {
+            this.idle();
+            return;
+        }
+
+        if (!this.isRunningForward && !this.isDying && !this.died && !this.isAttacking) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;
@@ -205,7 +212,12 @@ export class Player extends Component {
     }
 
     runBackward() {
-        if (this.state !== PLAYER_STATE_RUN_BACKWARD && !this.died && !this.isAttacking && !this.blockedBackward) {
+        if (this.backwardCollisions) {
+            this.idle();
+            return;
+        }
+
+        if (!this.isRunningBackward && !this.isDying && !this.died && !this.isAttacking && !this.backwardCollisions) {
             this.frame = 0;
             this.frames = 0;
             this.srcX = this.startSrcX;

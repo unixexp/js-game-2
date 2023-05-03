@@ -57,12 +57,11 @@ export class Enemy extends Component {
     update(params) {
         super.update(params);
 
-        if (this.died)
-            return;
+        this.x = this.x + this.layer.currentSpeed - this.currentSpeed;
+
+        if (this.died) return;
 
         this.timeToAnimate += params.deltaTime;
-
-        this.x = this.x + this.layer.currentSpeed - this.currentSpeed;
 
         if (this.timeToAnimate > this.animateInterval) {
 
@@ -122,27 +121,64 @@ export class Enemy extends Component {
     }
 
     idle() {
-        this.isRunning = false;
-        this.isAttacking = false;
-        this.isIdle = true;
-        this.currentSpeed = 0;
+        if (this.isIdle && !this.isDying && !this.died && !this.isAttacking) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = ENEMY_STATE_IDLE;
+            this.isRunning = false;
+            this.isAttacking = false;
+            this.isIdle = true;
+            this.currentSpeed = 0;
+        }
         console.log(`Enemy #${this.id} idle`);
     }
 
     run() {
-        this.isRunning = true;
-        this.isAttacking = false;
-        this.isIdle = false;
-        this.currentSpeed = this.speed;
-        console.log(`Enemy #${this.id} start run`);
+        if (!this.isRunning && !this.isDying && !this.died && !this.isAttacking) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = ENEMY_STATE_RUN;
+            this.isRunning = true;
+            this.isIdle = false;
+            this.currentSpeed = this.speed;
+        }
     }
 
     attack() {
-        this.isRunning = false;
-        this.isAttacking = true;
-        this.isIdle = false;
-        this.currentSpeed = 0;
-        console.log(`Enemy #${this.id} start attack`);
+        if (!this.isAttacking && !this.isDying && !this.died) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = ENEMY_STATE_ATTACK;
+            this.isIdle = false;
+            this.isRunning = false;
+            this.isAttacking = true;
+            this.currentSpeed = 0;
+        }
+    }
+
+    die() {
+        if (!this.isAttacking && !this.isDying && !this.died) {
+            this.frame = 0;
+            this.frames = 0;
+            this.srcX = this.startSrcX;
+            this.srcY = 0;
+            this.frames = 0;
+            this.state = ENEMY_STATE_DIE;
+            this.isIdle = false;
+            this.isRunning = false;
+            this.isAttacking = false;
+            this.isDying = true;
+            this.currentSpeed = 0;
+        }
     }
 
     checkCollision(component) {

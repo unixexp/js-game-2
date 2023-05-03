@@ -12,10 +12,10 @@ export class DragonEnemy extends Enemy {
         this.visibility = 350;
 
         this.stateData = [
-            { url: "assets/img/characters/dragon-enemy-idle.png", lastLineFrame: 4, lastFrame: 24 },
-            { url: "assets/img/characters/dragon-enemy-run.png", lastLineFrame: 4, lastFrame: 40 },
-            { url: "assets/img/characters/dragon-enemy-attack.png", lastLineFrame: 4, lastFrame: 20 },
-            { url: "assets/img/characters/dragon-enemy-die.png", lastLineFrame: 4, lastFrame: 24 },
+            { url: "assets/img/characters/dragon-enemy-idle.png", lastLineFrame: 4, lastFrame: 20 },
+            { url: "assets/img/characters/dragon-enemy-run.png", lastLineFrame: 4, lastFrame: 20 },
+            { url: "assets/img/characters/dragon-enemy-attack.png", lastLineFrame: 5, lastFrame: 30 },
+            { url: "assets/img/characters/dragon-enemy-die.png", lastLineFrame: 4, lastFrame: 24 }
         ];
     }
 
@@ -29,15 +29,6 @@ export class DragonEnemy extends Enemy {
 
     render(params) {
         super.render(params);
-    }
-
-    checkCollision(component) {
-        if (this.x < component.x + component.width - this.startSrcX * 2
-                && this.x - this.startSrcX > component.x) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

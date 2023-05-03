@@ -65,7 +65,7 @@ export class Level extends Component {
         this.enemies.forEach(enemy => {
             if (enemy.checkCollision(this.player)) {
                 this.player.forwardCollisions++;
-                enemy.attack();
+                enemy.die();
             } else if (enemy.checkVisibility(this.player)) {
                 enemy.run();
             } else {

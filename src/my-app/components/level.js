@@ -4,7 +4,7 @@ import { loadImage } from "../../engine/utils/files";
 export class Level extends Component {
 
     constructor(app) {
-        super(app);
+        super(app, 0, 0, 0, 0);
         // Level speed and length
         this.startPosition = 0;
         this.endPosition = 999999;

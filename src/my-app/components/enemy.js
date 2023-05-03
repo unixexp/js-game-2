@@ -40,6 +40,7 @@ export class Enemy extends Component {
         ];
         this.state = ENEMY_STATE_IDLE;
         this.isAttacking = false;
+        this.attackCompleted = false;
         this.isRunning = false;
         this.isIdle = true;
         this.isDying = false;
@@ -71,6 +72,7 @@ export class Enemy extends Component {
             if (this.frames == this.stateData[this.state].lastFrame) {
                 if (this.isDying) {
                     this.died = true;
+                    this.isDying = false;
                 } else {
                     this.srcX = this.startSrcX;
                     this.srcY = 0;
@@ -78,9 +80,10 @@ export class Enemy extends Component {
                     this.frames = 0;
                 }
 
-                this.isJumping = false;
-                this.isAttacking = false;
-                this.isDying = false;
+                if (this.isAttacking) {
+                    this.attackCompleted = true;
+                    this.isAttacking = false;
+                }
             } else {
                 if (this.frame == this.stateData[this.state].lastLineFrame) {
                     this.frame = 0;
@@ -133,7 +136,6 @@ export class Enemy extends Component {
             this.isIdle = true;
             this.currentSpeed = 0;
         }
-        console.log(`Enemy #${this.id} idle`);
     }
 
     run() {

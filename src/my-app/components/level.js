@@ -65,7 +65,7 @@ export class Level extends Component {
         this.enemies.forEach(enemy => {
             if (enemy.checkCollision(this.player)) {
                 this.player.forwardCollisions++;
-                enemy.die();
+                enemy.attack();
             } else if (enemy.checkVisibility(this.player)) {
                 enemy.run();
             } else {
@@ -75,6 +75,21 @@ export class Level extends Component {
                     this.player.forwardCollisions = 0;
                 }
             }
+
+        this.enemies.forEach(enemy => {
+            if (enemy.checkCollision(this.player)) {
+                if (enemy.attackCompleted == true) {
+                    enemy.attackCompleted = false;
+                    this.player.health -= enemy.strength;
+                    console.log(`GOAL!: ${this.player.health}`);
+                }
+            } else {
+                if (enemy.attackCompleted == true) {
+                    enemy.attackCompleted = false;
+                    console.log(`MISS!: ${this.player.health}`);
+                }
+            }
+        })
 
             enemy.update(params);
         });

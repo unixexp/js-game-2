@@ -187,7 +187,7 @@ export class Level extends Component {
 export class Background extends Component {
 
     constructor(app, level, layers) {
-        super(app);
+        super(app, 0, 0, 0, 0);
         this.level = level;
         this.layers = layers;
         this.permanentLayers = this.layers.filter(layer => layer.permanent);
@@ -230,7 +230,7 @@ export class Background extends Component {
 export class Layer extends Component {
 
     constructor(app, name, imageURL, speedModifier, permanent) {
-        super(app);
+        super(app, 0, 0, 0, 0);
         this.name = name;
         this.imageURL = imageURL;
         this.image = null;
